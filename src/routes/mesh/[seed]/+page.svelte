@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { PUBLIC_APP_URL } from "$env/static/public";
   import { AvatarParams, getRandomSeed, type AvatarProps } from "$lib/schema";
   import qs from "qs";
   import { Debounced, watch, ElementSize } from "runed";
@@ -31,7 +32,7 @@
   let imgSrc = $state<string>();
   const imgSrcDebounced = new Debounced(() => imgSrc, 400);
   const seedDebounced = new Debounced(() => seed, 400);
-  const fullUrl = $derived<string>(`http://localhost:5173${imgSrc}`);
+  const fullUrl = $derived<string>(`${PUBLIC_APP_URL}${imgSrc}`);
 
   function randomSeed() {
     seed = getRandomSeed();

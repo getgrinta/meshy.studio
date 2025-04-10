@@ -1,9 +1,13 @@
+<script lang="ts">
+  import { PUBLIC_APP_URL } from "$env/static/public";
+</script>
+
 <div class="container mx-auto flex flex-col gap-4 mt-8">
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <div class="card bg-base-100 shadow-sm">
       <figure>
         <img
-          src="http://localhost:5173/api/mesh/Meshy?noise=8&sharpen=1&negate=false&gammaIn=2.1&gammaOut=2.2&brightness=100&saturation=100&hue=0&lightness=0&blur=0"
+          src="{PUBLIC_APP_URL}/api/mesh/Meshy?noise=8&sharpen=1&negate=false&gammaIn=2.1&gammaOut=2.2&brightness=100&saturation=100&hue=0&lightness=0&blur=0"
           alt="Meshy"
         />
       </figure>
