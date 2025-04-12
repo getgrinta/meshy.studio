@@ -11,7 +11,7 @@
     RefreshCcwIcon,
   } from "lucide-svelte";
   import { toast } from "svelte-sonner";
-  import { PaneGroup, Pane, PaneResizer } from "paneforge";
+  import { PaneGroup, Pane, PaneResizer, type PaneGroupAPI } from "paneforge";
   import { draggable } from "@neodrag/svelte";
   import { page } from "$app/state";
   import { goto } from "$app/navigation";
@@ -23,6 +23,7 @@
   const stringSearch = $derived<string>(`?${qs.stringify(parsedSearch)}`);
 
   let parentEl = $state<HTMLElement>();
+  let paneGroup = $state<PaneGroupAPI>();
   let parentSize = new ElementSize(() => parentEl);
   let imgPosition = $state({ x: 0, y: 0 });
   let imgDragged = $state(false);
@@ -30,8 +31,8 @@
   let zoom = $state<number>(1);
   let tab = $state<"gradient" | "filters">("gradient");
   let imgSrc = $state<string>();
-  const imgSrcDebounced = new Debounced(() => imgSrc, 400);
-  const seedDebounced = new Debounced(() => seed, 400);
+  const imgSrcDebounced = new Debounced(() => imgSrc, 500);
+  const seedDebounced = new Debounced(() => seed, 500);
   const fullUrl = $derived<string>(`${PUBLIC_APP_URL}${imgSrc}`);
 
   function randomSeed() {
@@ -63,6 +64,12 @@
     history.pushState({}, "", stringSearch);
   });
 
+  $effect(() => {
+    if (!paneGroup) return;
+    if (parentSize.width > 768) return paneGroup.setLayout([75, 25]);
+    paneGroup.setLayout([50, 50]);
+  });
+
   watch(
     () => seedDebounced.current,
     () => {
@@ -86,7 +93,6 @@
       newZoom -= zoomSpeed;
     }
     zoom = Math.min(Math.max(newZoom, 0.5), 2);
-    console.log(event, zoom);
   }
 
   function onImgDragStart() {
@@ -116,14 +122,16 @@
 {#if parsedSearch}
   <div bind:this={parentEl} class="flex flex-1 flex-col">
     <PaneGroup
+      bind:paneGroup
       direction={parentSize.width > 768 ? "horizontal" : "vertical"}
       autoSaveId="studio"
-      class="flex-1"
+      class="flex flex-1"
     >
       <Pane
         minSize={25}
-        defaultSize={75}
-        class="relative block lg:flex items-center justify-center"
+        defaultSize={parentSize.width > 768 ? 75 : 50}
+        maxSize={80}
+        class="relative block lg:flex items-center justify-center p-4"
         onwheel={onWheel}
       >
         <figure
@@ -135,7 +143,7 @@
             onDragStart: onImgDragStart,
           }}
           class={clsx(
-            "relative w-[512px] h-[512px] m-2 flex justify-center items-center shadow-xl cursor-grab",
+            "relative w-full h-full max-w-[512px] max-h-[512px] flex justify-center items-center shadow-xl cursor-grab",
             imgDragged && "transition",
             imgLoading && "skeleton"
           )}
@@ -168,7 +176,7 @@
             </button>
             <input
               value={toPercent(zoom)}
-              class="input input-sm w-20 join-item"
+              class="input input-sm w-20 bg-neutral border-neutral shadow-none join-item"
               readonly
             />
             <button class="btn btn-sm btn-square join-item" onclick={zoomOut}>
@@ -182,8 +190,9 @@
       </PaneResizer>
       <Pane
         minSize={20}
-        defaultSize={25}
-        class="p-2 block lg:flex flex-col gap-4 !overflow-scroll"
+        maxSize={50}
+        defaultSize={parentSize.width > 768 ? 25 : 50}
+        class="p-4 block lg:flex flex-nowrap flex-col gap-4 !overflow-scroll max-h-[calc(100vh-4rem)]"
       >
         <div class="tabs tabs-sm tabs-box w-full">
           <input
@@ -204,113 +213,111 @@
             disabled
           />
         </div>
-        <div
-          class="collapse collapse-arrow bg-base-100 border-2 border-base-300"
-        >
-          <input type="checkbox" checked />
-          <div class="collapse-title font-semibold">Gradient</div>
-          <div class="collapse-content flex flex-col gap-2">
-            <label class="label text-sm" for="seed">Seed</label>
-            <div class="join">
-              <input
-                id="seed"
-                type="text"
-                class="input w-full join-item"
-                placeholder="Seed"
-                bind:value={seed}
-              />
-              <button class="btn join-item" onclick={randomSeed}>
-                <RefreshCcwIcon size={16} />
-                Random
-              </button>
-            </div>
-            <label class="label text-sm" for="noise">Noise</label>
-            <SliderInput
-              id="noise"
-              bind:value={parsedSearch.noise}
-              min={0}
-              max={32}
-            />
-            <label class="label text-sm" for="sharpen">Sharpen</label>
-            <SliderInput
-              id="sharpen"
-              bind:value={parsedSearch.sharpen}
-              min={1}
-              max={10}
-              step={0.1}
-            />
-            <label class="label text-sm" for="negate">Negate</label>
+        <div class="flex flex-col gap-2">
+          <h2 class="font-semibold">Gradient</h2>
+          <label class="label text-sm" for="seed">Seed</label>
+          <div class="join">
             <input
-              id="negate"
-              type="checkbox"
-              bind:checked={parsedSearch.negate}
-              class="toggle"
+              id="seed"
+              type="text"
+              class="input w-full bg-neutral border-neutral shadow-none join-item"
+              placeholder="Seed"
+              bind:value={seed}
             />
-            <label class="label text-sm" for="gammaIn">Gamma In</label>
-            <SliderInput
-              id="gammaIn"
-              bind:value={parsedSearch.gammaIn}
-              min={1}
-              max={3}
-              step={0.1}
-            />
-            <label class="label text-sm" for="gammaOut">Gamma Out</label>
-            <SliderInput
-              id="gammaOut"
-              bind:value={parsedSearch.gammaOut}
-              min={1}
-              max={3}
-              step={0.1}
-            />
+            <button class="btn join-item" onclick={randomSeed}>
+              <RefreshCcwIcon size={16} />
+              Random
+            </button>
           </div>
+          <label class="label text-sm" for="text">Text</label>
+          <input
+            id="text"
+            type="text"
+            class="input w-full bg-neutral border-neutral shadow-none join-item"
+            placeholder="Text"
+            bind:value={parsedSearch.text}
+          />
+          <label class="label text-sm" for="noise">Noise</label>
+          <SliderInput
+            id="noise"
+            bind:value={parsedSearch.noise}
+            min={0}
+            max={32}
+          />
+          <label class="label text-sm" for="sharpen">Sharpen</label>
+          <SliderInput
+            id="sharpen"
+            bind:value={parsedSearch.sharpen}
+            min={1}
+            max={10}
+            step={0.1}
+          />
+          <label class="label text-sm" for="negate">Negate</label>
+          <input
+            id="negate"
+            type="checkbox"
+            bind:checked={parsedSearch.negate}
+            class="toggle"
+          />
+          <label class="label text-sm" for="gammaIn">Gamma In</label>
+          <SliderInput
+            id="gammaIn"
+            bind:value={parsedSearch.gammaIn}
+            min={1}
+            max={3}
+            step={0.1}
+          />
+          <label class="label text-sm" for="gammaOut">Gamma Out</label>
+          <SliderInput
+            id="gammaOut"
+            bind:value={parsedSearch.gammaOut}
+            min={1}
+            max={3}
+            step={0.1}
+          />
         </div>
-        <div
-          class="collapse collapse-arrow bg-base-100 border-2 border-base-300"
-        >
-          <input type="checkbox" checked />
-          <div class="collapse-title font-semibold">Filters</div>
-          <div class="collapse-content flex flex-col gap-2">
-            <label class="label text-sm" for="blur">Blur</label>
-            <SliderInput
-              id="blur"
-              bind:value={parsedSearch.blur}
-              min={0}
-              max={80}
-              step={1}
-            />
-            <label class="label text-sm" for="brightness">Brightness</label>
-            <SliderInput
-              id="brightness"
-              bind:value={parsedSearch.brightness}
-              min={0}
-              max={100}
-              step={1}
-            />
-            <label class="label text-sm" for="saturation">Saturation</label>
-            <SliderInput
-              id="saturation"
-              bind:value={parsedSearch.saturation}
-              min={0}
-              max={100}
-              step={1}
-            />
-            <label class="label text-sm" for="hue">Hue</label>
-            <SliderInput
-              id="hue"
-              bind:value={parsedSearch.hue}
-              min={0}
-              max={360}
-              step={1}
-            />
-            <label class="label text-sm" for="lightness">Lightness</label>
-            <SliderInput
-              id="lightness"
-              bind:value={parsedSearch.lightness}
-              min={0}
-              max={100}
-              step={1}
-            />
-          </div>
+        <div class="flex flex-col gap-2">
+          <h2 class="font-semibold">Filters</h2>
+          <label class="label text-sm" for="blur">Blur</label>
+          <SliderInput
+            id="blur"
+            bind:value={parsedSearch.blur}
+            min={0}
+            max={80}
+            step={1}
+          />
+          <label class="label text-sm" for="brightness">Brightness</label>
+          <SliderInput
+            id="brightness"
+            bind:value={parsedSearch.brightness}
+            min={0}
+            max={100}
+            step={1}
+          />
+          <label class="label text-sm" for="saturation">Saturation</label>
+          <SliderInput
+            id="saturation"
+            bind:value={parsedSearch.saturation}
+            min={0}
+            max={100}
+            step={1}
+          />
+          <label class="label text-sm" for="hue">Hue</label>
+          <SliderInput
+            id="hue"
+            bind:value={parsedSearch.hue}
+            min={0}
+            max={360}
+            step={1}
+          />
+          <label class="label text-sm" for="lightness">Lightness</label>
+          <SliderInput
+            id="lightness"
+            bind:value={parsedSearch.lightness}
+            min={0}
+            max={100}
+            step={1}
+          />
         </div>
         <div class="w-full flex gap-2 mt-auto">
           <a

@@ -35,16 +35,17 @@ export const GET: RequestHandler = async (event) => {
   if (await limiter.isLimited(event)) return error(429);
 
   const search = AvatarParams.parse({
-    noise: url.searchParams.get('noise'),
-    sharpen: url.searchParams.get('sharpen'),
-    negate: url.searchParams.get('negate'),
-    gammaIn: url.searchParams.get('gammaIn'),
-    gammaOut: url.searchParams.get('gammaOut'),
-    brightness: url.searchParams.get('brightness'),
-    saturation: url.searchParams.get('saturation'),
-    hue: url.searchParams.get('hue'),
-    lightness: url.searchParams.get('lightness'),
-    blur: url.searchParams.get('blur'),
+    noise: url.searchParams.get('noise') ?? undefined,
+    sharpen: url.searchParams.get('sharpen') ?? undefined,
+    negate: url.searchParams.get('negate') ?? undefined,
+    gammaIn: url.searchParams.get('gammaIn') ?? undefined,
+    gammaOut: url.searchParams.get('gammaOut') ?? undefined,
+    brightness: url.searchParams.get('brightness') ?? undefined,
+    saturation: url.searchParams.get('saturation') ?? undefined,
+    hue: url.searchParams.get('hue') ?? undefined,
+    lightness: url.searchParams.get('lightness') ?? undefined,
+    blur: url.searchParams.get('blur') ?? undefined,
+    text: url.searchParams.get('text') ?? undefined
   });
 
   const seed = stringHashCode(params.seed);
@@ -82,9 +83,37 @@ export const GET: RequestHandler = async (event) => {
     gradientRects += `    <rect width="100%" height="100%" fill="url(#${id})" />\n`;
   });
 
+  const margin = 32; // Margin in pixels
+  const containerWidth = 512 - (margin * 2); // Container width minus margins
+  const fontSize = Math.min(256, containerWidth / Math.max(1, search.text.length) / 1.2); // Better scaling with a minimum cap
+
+  function renderText(text: string) {
+    if (!text) return '';
+    return `<text x="50%" y="50%" text-anchor="middle" dy=".3em" font-size="${fontSize}">${text.toUpperCase()}</text>`;
+  }
 
   const svg = `
-    <svg width="100%" height="100%" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    <svg width="100%" height="100%" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMid meet">
+      <style>
+        /* Define the font family using web fonts */
+        @font-face {
+          font-family: "Sui Generis";
+          src:
+            url("/suigbi.ttf")
+              format("truetype");
+        }
+
+        /* Style the text */
+        text {
+          /* Specify the system or custom font to use */
+          font-family: "Sui Generis", sans-serif;
+          fill: white;
+
+          /* Add other styling */
+          font-weight: bold;
+          font-style: italic;
+        }
+      </style>
       <defs>
         <!-- Background base gradient -->
         <linearGradient id="base" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -101,6 +130,8 @@ export const GET: RequestHandler = async (event) => {
 
       <!-- Layered radial gradients -->
       ${gradientRects.trim()}
+
+      ${search.text ? renderText(search.text) : ''}
     </svg>
   `;
 

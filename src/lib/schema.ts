@@ -17,6 +17,7 @@ export const AvatarParams = z.object({
     hue: z.coerce.number().min(0).max(360).default(0),
     lightness: z.coerce.number().min(0).max(100).default(0),
     blur: z.coerce.number().min(0).max(80).default(0),
+    text: z.string().default(""),
 });
 
 export type AvatarProps = z.infer<typeof AvatarParams>
