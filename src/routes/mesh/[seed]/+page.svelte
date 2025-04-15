@@ -119,6 +119,11 @@
   }
 </script>
 
+<svelte:head>
+  <title>Meshy - {seed}</title>
+  <meta property="og:image" content={fullUrl} />
+</svelte:head>
+
 {#if parsedSearch}
   <div bind:this={parentEl} class="flex flex-1 flex-col">
     <PaneGroup
