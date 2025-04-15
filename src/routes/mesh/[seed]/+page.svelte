@@ -17,7 +17,9 @@
   import { goto } from "$app/navigation";
   import clsx from "clsx";
   import SliderInput from "$lib/components/slider-input.svelte";
+  import type { PageProps } from "./$types";
 
+  let { data }: PageProps = $props();
   let seed = $derived(page.params.seed);
   let parsedSearch = $state<AvatarProps>();
   const stringSearch = $derived<string>(`?${qs.stringify(parsedSearch)}`);
@@ -122,7 +124,7 @@
 <svelte:head>
   <title>Meshy - {seed}</title>
   <meta property="og:title" content={`Meshy gradient ${seed}`} />
-  <meta property="og:image" content={fullUrl} />
+  <meta property="og:image" content={data.ogUrl} />
   <meta property="og:image:type" content="image/jpeg" />
   <meta property="og:image:width" content="512" />
   <meta property="og:image:height" content="512" />
