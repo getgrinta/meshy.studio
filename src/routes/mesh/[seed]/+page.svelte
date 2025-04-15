@@ -122,6 +122,7 @@
 <svelte:head>
   <title>Meshy - {seed}</title>
   <meta property="og:image" content={fullUrl} />
+  <meta property="og:description" content={`Meshy gradient ${seed}`} />
 </svelte:head>
 
 {#if parsedSearch}
