@@ -121,7 +121,11 @@
 
 <svelte:head>
   <title>Meshy - {seed}</title>
+  <meta property="og:title" content={`Meshy gradient ${seed}`} />
   <meta property="og:image" content={fullUrl} />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
   <meta property="og:description" content={`Meshy gradient ${seed}`} />
 </svelte:head>
 
