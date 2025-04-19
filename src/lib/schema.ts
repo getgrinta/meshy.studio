@@ -1,10 +1,12 @@
 import { z } from "zod";
+import { PRIMARY_COLOR } from "./const";
 
 export function getRandomSeed() {
     return Math.random().toString(36).substring(2, 15)
 }
 
 const booleanSchema = z.enum(["true", "false"]).transform((value) => value === "true")
+const primaryColorSchema = z.enum(PRIMARY_COLOR)
 
 export const AvatarParams = z.object({
     noise: z.coerce.number().min(0).max(32).default(8),
@@ -21,3 +23,17 @@ export const AvatarParams = z.object({
 });
 
 export type AvatarProps = z.infer<typeof AvatarParams>
+
+export const ChartDataSchema = z.object({
+    data: z.array(z.object({
+        x: z.string(),
+        y: z.coerce.number()
+    })).default([{ x: "", y: 1 }]),
+    darkMode: booleanSchema.default('false'),
+    primaryColor: primaryColorSchema.default('blue'),
+    borderRadius: z.coerce.number().min(0).max(32).default(8),
+    barMargin: z.coerce.number().min(0).max(0.75).default(0.05),
+    caption: z.string().default("")
+})
+
+export type ChartData = z.infer<typeof ChartDataSchema>

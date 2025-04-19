@@ -1,0 +1,1 @@
+export const PRIMARY_COLOR = ['red', 'orange', 'green', 'teal', 'blue', 'purple', 'pink', 'gray'] as const

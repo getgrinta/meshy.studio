@@ -1,12 +1,14 @@
 <script lang="ts">
   let {
     value = $bindable(),
+    name,
     min = 0,
     max = 100,
     step = 1,
     id,
   } = $props<{
     value: number;
+    name?: string;
     min?: number;
     max?: number;
     step?: number;
@@ -26,6 +28,8 @@
     class="input input-xs border-neutral bg-neutral shadow-none w-20"
     bind:value
     {id}
+    {name}
+    {step}
   />
   <input
     type="range"
@@ -34,5 +38,6 @@
     {min}
     {max}
     {step}
+    {name}
   />
 </div>

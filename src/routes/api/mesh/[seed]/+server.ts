@@ -1,6 +1,6 @@
 import { AvatarParams } from '$lib/schema';
 import { error } from '@sveltejs/kit';
-import type { RequestHandler } from '../$types';
+import type { RequestHandler } from './$types';
 import sharp from 'sharp';
 import { RateLimiter } from 'sveltekit-rate-limiter/server';
 
@@ -95,14 +95,6 @@ export const GET: RequestHandler = async (event) => {
   const svg = `
     <svg width="100%" height="100%" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMid meet">
       <style>
-        /* Define the font family using web fonts */
-        @font-face {
-          font-family: "Sui Generis";
-          src:
-            url("/suigbi.ttf")
-              format("truetype");
-        }
-
         /* Style the text */
         text {
           /* Specify the system or custom font to use */
