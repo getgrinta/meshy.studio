@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PRIMARY_COLOR } from "./const";
+import { OG_TEMPLATE, PRIMARY_COLOR } from "./const";
 
 export function getRandomSeed() {
     return Math.random().toString(36).substring(2, 15)
@@ -33,7 +33,18 @@ export const ChartDataSchema = z.object({
     primaryColor: primaryColorSchema.default('blue'),
     borderRadius: z.coerce.number().min(0).max(32).default(8),
     barMargin: z.coerce.number().min(0).max(0.75).default(0.05),
-    caption: z.string().default("")
+    caption: z.string().default(""),
+    label: z.string().default(""),
 })
 
 export type ChartData = z.infer<typeof ChartDataSchema>
+
+export const OgDataSchema = z.object({
+    darkMode: booleanSchema.default('false'),
+    template: z.enum(OG_TEMPLATE).default(OG_TEMPLATE[0]),
+    branding: z.string().default("Meshy Studio"),
+    title: z.string().default("Never implement OG Image yourself"),
+    description: z.string().default("Do not waste time implementing OG Image generation yourself. We've got you covered."),
+});
+
+export type OgData = z.infer<typeof OgDataSchema>

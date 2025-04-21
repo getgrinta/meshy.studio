@@ -85,6 +85,14 @@ export const GET: RequestHandler = async ({ url }) => {
                 }, x);
             });
         })
+        svg.text({
+            x: "10", // 10px from left edge
+            y: "590", // 10px from bottom edge
+            'font-size': "16",
+            fill: chartData.darkMode ? convert(colors.gray[600], 'hex') : convert(colors.gray[400], 'hex'),
+            'font-family': "Inter, sans-serif",
+            'font-weight': "600",
+        }, chartData.label);
         // Subtle watermark in bottom-right
         svg.text({
             x: "790", // 10px from right edge

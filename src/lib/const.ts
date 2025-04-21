@@ -1,1 +1,2 @@
 export const PRIMARY_COLOR = ['red', 'orange', 'green', 'teal', 'blue', 'purple', 'pink', 'gray'] as const
+export const OG_TEMPLATE = ['blog', 'calendar', 'cipher', 'grid', 'laptop', 'map', 'rays', 'wave'] as const

@@ -37,6 +37,7 @@
       borderRadius: 8,
       barMargin: 0.05,
       caption: "",
+      label: "",
     },
   });
 
@@ -98,6 +99,7 @@
     setData("borderRadius", parsedQuery.borderRadius);
     setData("barMargin", parsedQuery.barMargin);
     setData("caption", parsedQuery.caption);
+    setData("label", parsedQuery.label);
     setTimeout(() => {
       mounted = true;
     }, 100);
@@ -235,6 +237,16 @@
         type="text"
         value={$formData.caption}
         placeholder="Chart caption..."
+        maxlength="100"
+      />
+      <label class="label" for="label">Label</label>
+      <input
+        id="label"
+        name="label"
+        class="input w-full"
+        type="text"
+        value={$formData.label}
+        placeholder="Chart label..."
         maxlength="100"
       />
       <label class="label gap-4" for="primaryColor">Primary Color</label>
