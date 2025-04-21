@@ -5,8 +5,17 @@ import { readFile } from "node:fs/promises";
 import sharp from "sharp";
 import { convert } from "colorizr";
 import colors from "tailwindcss/colors";
+import { RateLimiter } from 'sveltekit-rate-limiter/server';
+import { error } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async ({ url }) => {
+const limiter = new RateLimiter({
+    IP: [100, 'h'],
+    IPUA: [50, 'm'],
+});
+
+export const GET: RequestHandler = async (event) => {
+    const { url } = event;
+    if (await limiter.isLimited(event)) return error(429);
     const searchParams = qs.parse(
         url.search.length > 0 ? url.search.substring(1) : ""
     );
