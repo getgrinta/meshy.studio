@@ -17,7 +17,7 @@
         <h2 class="card-title">Mesh Gradient</h2>
         <p>Generate a stunning and crispy mesh gradient images.</p>
         <div class="card-actions justify-end">
-          <a href="/mesh" class="btn btn-primary">Generate</a>
+          <a href="/mesh" class="btn btn-primary">Generate Gradient</a>
         </div>
       </div>
     </div>
@@ -35,7 +35,25 @@
         <h2 class="card-title">Chart</h2>
         <p>Create flawless charts.</p>
         <div class="card-actions justify-end">
-          <a href="/chart" class="btn btn-primary">Create</a>
+          <a href="/chart" class="btn btn-primary">Create Chart</a>
+        </div>
+      </div>
+    </div>
+    <div class="card bg-base-100 shadow-sm">
+      <a href="/og" class="h-full">
+        <figure class="h-full">
+          <img
+            src="{PUBLIC_APP_URL}/api/og"
+            alt="OG Image"
+            class="object-cover h-full"
+          />
+        </figure>
+      </a>
+      <div class="card-body">
+        <h2 class="card-title">OG Image</h2>
+        <p>Generate OG images.</p>
+        <div class="card-actions justify-end">
+          <a href="/og" class="btn btn-primary">Generate OG</a>
         </div>
       </div>
     </div>

@@ -13,8 +13,9 @@ export const GET: RequestHandler = async ({ url }) => {
     const ogData = OgDataSchema.parse(searchParams);
     const mode = ogData.darkMode ? "dark" : "light";
     const filename = `${ogData.template}-${mode}.jpg`;
+    const filePath = import.meta.env.PROD ? `../../../../../../static/og/${filename}` : `../../../../static/og/${filename}`
     const templatePath = new URL(
-        `../../../../static/og/${filename}`,
+        filePath,
         import.meta.url
     );
     const templateBuffer = await readFile(templatePath);
